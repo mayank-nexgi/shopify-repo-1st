@@ -1,0 +1,275 @@
+{% schema %}
+{
+  "name": "Product Grid Section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "NEW IN: UP TO 10% OFF"
+    },
+    {
+      "type": "text",
+      "id": "section_subtitle",
+      "label": "Section Subtitle",
+      "default": "Discover our latest handcrafted pieces, freshly added to elevate your home with timeless style."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_card",
+      "name": "Product Card",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Product"
+        },
+        {
+          "type": "text",
+          "id": "discount_badge",
+          "label": "Discount Badge Text (e.g. -10%)",
+          "default": "-10%"
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom Title (Optional)",
+          "default": "Botanical Bird Hand Embroidered Lampshade"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom Image (If no product selected)"
+        },
+        {
+          "type": "text",
+          "id": "custom_price",
+          "label": "Custom Sale Price",
+          "default": "Rs. 5,399.00"
+        },
+        {
+          "type": "text",
+          "id": "custom_compare_price",
+          "label": "Custom Compare Price (Strikethrough)",
+          "default": "Rs. 6,000.00"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Grid Section",
+      "blocks": [
+        {
+          "type": "product_card",
+          "settings": {
+            "discount_badge": "-10%",
+            "custom_title": "Botanical Bird Hand Embroidered Lampshade",
+            "custom_price": "Rs. 5,399.00",
+            "custom_compare_price": "Rs. 6,000.00"
+          }
+        },
+        {
+          "type": "product_card",
+          "settings": {
+            "discount_badge": "-8%",
+            "custom_title": "Blush and Bloom Hand Embroidered Lampshade",
+            "custom_price": "Rs. 5,499.00",
+            "custom_compare_price": "Rs. 6,000.00"
+          }
+        },
+        {
+          "type": "product_card",
+          "settings": {
+            "discount_badge": "-8%",
+            "custom_title": "Feathered Fables Hand Embroidered Lampshade",
+            "custom_price": "Rs. 5,499.00",
+            "custom_compare_price": "Rs. 6,000.00"
+          }
+        },
+        {
+          "type": "product_card",
+          "settings": {
+            "discount_badge": "-7%",
+            "custom_title": "Flora Doodle Hand Embroidered Lampshade",
+            "custom_price": "Rs. 7,399.00",
+            "custom_compare_price": "Rs. 8,000.00"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .product-grid-wrapper {
+    background-color: #faf6f0;
+    padding: 60px 5%;
+    text-align: center;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  .product-grid-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    font-family: serif;
+    letter-spacing: 0.5px;
+  }
+
+  .product-grid-header p {
+    font-size: 14px;
+    color: #666666;
+    margin-bottom: 45px;
+  }
+
+  .products-container-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .custom-prod-card {
+    background: transparent;
+    text-align: left;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .prod-img-box {
+    position: relative;
+    width: 100%;
+    height: 340px;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #e5e2dc;
+  }
+
+  .prod-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Badges Overlay */
+  .badges-wrapper {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 2;
+  }
+
+  .badge-discount, .badge-new {
+    background-color: #e6a15c;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    display: inline-block;
+    width: max-content;
+  }
+
+  .badge-new {
+    background-color: #e6a15c;
+  }
+
+  .prod-info {
+    padding-top: 15px;
+    text-align: center;
+  }
+
+  .prod-info h3 {
+    font-size: 15px;
+    font-weight: 500;
+    color: #222222;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    height: 40px;
+    overflow: hidden;
+  }
+
+  .prod-prices {
+    font-size: 14px;
+  }
+
+  .compare-price {
+    text-decoration: line-through;
+    color: #888888;
+    margin-right: 8px;
+  }
+
+  .current-price {
+    font-weight: 700;
+    color: #111111;
+  }
+
+  @media (max-width: 1024px) {
+    .products-container-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .products-container-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="product-grid-wrapper">
+  <div class="product-grid-header">
+    <h2>{{ section.settings.section_title }}</h2>
+    <p>{{ section.settings.section_subtitle }}</p>
+  </div>
+
+  <div class="products-container-grid">
+    {% for block in section.blocks %}
+      {% assign prod = block.settings.product %}
+      <a href="{{ prod.url | default: '#' }}" class="custom-prod-card" {{ block.shopify_attributes }}>
+        <div class="prod-img-box">
+          <div class="badges-wrapper">
+            {% if block.settings.discount_badge != blank %}
+              <span class="badge-discount">{{ block.settings.discount_badge }}</span>
+            {% endif %}
+            <span class="badge-new">NEW IN</span>
+          </div>
+
+          {% if prod.featured_image %}
+            <img src="{{ prod.featured_image | image_url: width: 500 }}" alt="{{ prod.title }}">
+          {% elsif block.settings.custom_image %}
+            <img src="{{ block.settings.custom_image | image_url: width: 500 }}" alt="Product Image">
+          {% else %}
+            <img src="https://via.placeholder.com/400x450/d8d4cd/333333?text=Lampshade" alt="Placeholder">
+          {% endif %}
+        </div>
+
+        <div class="prod-info">
+          <h3>{{ prod.title | default: block.settings.custom_title }}</h3>
+          <div class="prod-prices">
+            {% if prod.price %}
+              {% if prod.compare_at_price > prod.price %}
+                <span class="compare-price">{{ prod.compare_at_price | money }}</span>
+              {% endif %}
+              <span class="current-price">{{ prod.price | money }}</span>
+            {% else %}
+              <span class="compare-price">{{ block.settings.custom_compare_price }}</span>
+              <span class="current-price">{{ block.settings.custom_price }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>

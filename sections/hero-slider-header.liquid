@@ -1,0 +1,351 @@
+{% schema %}
+{
+  "name": "Header & Hero Slider",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo Image"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Header Menu",
+      "default": "main-menu"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tagline",
+          "label": "Tagline / Subheading",
+          "default": "GET 20% OFF"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Upgrade Living Space"
+        },
+        {
+          "type": "text",
+          "id": "subtext",
+          "label": "Description",
+          "default": "High-Quality Sofas and Seating"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label",
+          "default": "SHOP NOW"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button Link"
+        },
+        {
+          "type": "image_picker",
+          "id": "slide_image",
+          "label": "Slide Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header & Hero Slider",
+      "blocks": [
+        {
+          "type": "slide"
+        },
+        {
+          "type": "slide"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Header Styling */
+  .custom-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 5%;
+    background-color: #ffffff;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+    z-index: 10;
+  }
+
+  .header-logo img {
+    max-height: 50px;
+    width: auto;
+    display: block;
+  }
+
+  .header-nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+  }
+
+  .header-nav a {
+    text-decoration: none;
+    color: #333333;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .header-nav a:hover,
+  .header-nav a.active {
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .header-icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .header-icons svg {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    fill: none;
+    stroke: #333;
+    stroke-width: 1.8;
+  }
+
+  /* Hero Slider Styling */
+  .hero-slider-wrapper {
+    position: relative;
+    width: 100%;
+    background-color: #e9e8e4;
+    overflow: hidden;
+  }
+
+  .hero-slides-container {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    width: 100%;
+  }
+
+  .hero-slide {
+    min-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 8%;
+    min-height: 520px;
+  }
+
+  .hero-content {
+    max-width: 480px;
+    z-index: 2;
+  }
+
+  .hero-tagline {
+    color: #e37b35;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .hero-heading {
+    font-size: 52px;
+    font-weight: 800;
+    color: #111111;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  .hero-subtext {
+    font-size: 16px;
+    color: #666666;
+    margin-bottom: 30px;
+  }
+
+  .hero-btn {
+    display: inline-block;
+    background-color: #000000;
+    color: #ffffff;
+    padding: 14px 36px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    transition: background 0.3s ease;
+  }
+
+  .hero-btn:hover {
+    background-color: #333333;
+  }
+
+  .hero-image-wrap {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .hero-image-wrap img {
+    max-width: 100%;
+    max-height: 420px;
+    object-fit: contain;
+  }
+
+  /* Slider Arrow Controls */
+  .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px;
+    height: 45px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 5;
+    transition: background 0.2s ease;
+  }
+
+  .slider-arrow:hover {
+    background-color: #ffffff;
+  }
+
+  .slider-arrow.prev {
+    left: 20px;
+  }
+
+  .slider-arrow.next {
+    right: 20px;
+  }
+
+  .slider-arrow svg {
+    width: 18px;
+    height: 18px;
+    stroke: #333;
+    stroke-width: 2;
+  }
+
+  @media (max-width: 768px) {
+    .header-nav { display: none; }
+    .hero-slide {
+      flex-direction: column;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .hero-image-wrap {
+      margin-top: 30px;
+      justify-content: center;
+    }
+    .hero-heading {
+      font-size: 36px;
+    }
+  }
+</style>
+
+<!-- HEADER -->
+<header class="custom-header">
+  <div class="header-logo">
+    <a href="/">
+      {% if section.settings.logo %}
+        <img src="{{ section.settings.logo | image_url: width: 300 }}" alt="{{ shop.name }}">
+      {% else %}
+        <strong style="font-family: serif; font-size: 20px;">The Couturiers Home</strong>
+      {% endif %}
+    </a>
+  </div>
+
+  <nav class="header-nav">
+    <ul>
+      {% for link in linklists[section.settings.menu].links %}
+        <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+      {% else %}
+        <li><a href="#" class="active">Cushion Covers</a></li>
+        <li><a href="#">Lampshades</a></li>
+        <li><a href="#">Rugs</a></li>
+        <li><a href="#">Table Accents</a></li>
+        <li><a href="#">About us</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+
+  <div class="header-icons">
+    <!-- Search Icon -->
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <!-- Wishlist Icon -->
+    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+    <!-- Account Icon -->
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+    <!-- Cart Icon -->
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+  </div>
+</header>
+
+<!-- HERO SLIDER -->
+<div class="hero-slider-wrapper">
+  <button class="slider-arrow prev" onclick="moveSlide(-1)">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+  </button>
+  <button class="slider-arrow next" onclick="moveSlide(1)">
+    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </button>
+
+  <div class="hero-slides-container" id="heroSlidesContainer">
+    {% for block in section.blocks %}
+      <div class="hero-slide" {{ block.shopify_attributes }}>
+        <div class="hero-content">
+          <div class="hero-tagline">{{ block.settings.tagline }}</div>
+          <h1 class="hero-heading">{{ block.settings.heading }}</h1>
+          <p class="hero-subtext">{{ block.settings.subtext }}</p>
+          <a href="{{ block.settings.button_link }}" class="hero-btn">{{ block.settings.button_label }}</a>
+        </div>
+        <div class="hero-image-wrap">
+          {% if block.settings.slide_image %}
+            <img src="{{ block.settings.slide_image | image_url: width: 800 }}" alt="{{ block.settings.heading }}">
+          {% else %}
+            <img src="https://via.placeholder.com/600x400/e9e8e4/333333?text=Sofa+Image" alt="Slider Image">
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  let currentSlide = 0;
+  function moveSlide(direction) {
+    const container = document.getElementById('heroSlidesContainer');
+    const totalSlides = container.children.length;
+    if (totalSlides === 0) return;
+    
+    currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+    container.style.transform = `translateX(-${currentSlide * 100}%)`;
+  }
+</script>

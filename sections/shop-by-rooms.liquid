@@ -1,0 +1,187 @@
+{% schema %}
+{
+  "name": "Shop By Rooms",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "Shop By Rooms"
+    },
+    {
+      "type": "text",
+      "id": "section_subtitle",
+      "label": "Section Subtitle",
+      "default": "Give your home an elegant touch at affordable prices"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "room_card",
+      "name": "Room Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "room_image",
+          "label": "Room Image"
+        },
+        {
+          "type": "text",
+          "id": "room_name",
+          "label": "Room Name",
+          "default": "Dining Room"
+        },
+        {
+          "type": "text",
+          "id": "room_offer",
+          "label": "Offer Text",
+          "default": "Sale up to 40% off"
+        },
+        {
+          "type": "url",
+          "id": "room_link",
+          "label": "Room Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop By Rooms",
+      "blocks": [
+        {
+          "type": "room_card",
+          "settings": {
+            "room_name": "Dining Room",
+            "room_offer": "Sale up to 40% off"
+          }
+        },
+        {
+          "type": "room_card",
+          "settings": {
+            "room_name": "Living Room",
+            "room_offer": "Sale up to 30% off"
+          }
+        },
+        {
+          "type": "room_card",
+          "settings": {
+            "room_name": "Bedroom",
+            "room_offer": "Sale up to 25% off"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .shop-by-rooms-section {
+    background-color: #faf6f0;
+    padding: 60px 5%;
+    text-align: center;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  .rooms-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    font-family: serif;
+  }
+
+  .rooms-header p {
+    font-size: 14px;
+    color: #666666;
+    margin-bottom: 40px;
+  }
+
+  .rooms-grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .room-item-card {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    transition: transform 0.3s ease;
+  }
+
+  .room-item-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .room-image-box {
+    width: 100%;
+    height: 420px;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #eee;
+  }
+
+  .room-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .room-details {
+    padding-top: 15px;
+    text-align: center;
+  }
+
+  .room-details h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 4px;
+  }
+
+  .room-details p {
+    font-size: 13px;
+    color: #777777;
+  }
+
+  @media (max-width: 900px) {
+    .rooms-grid-container {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+    .room-image-box {
+      height: 350px;
+    }
+  }
+</style>
+
+<div class="shop-by-rooms-section">
+  <div class="rooms-header">
+    <h2>{{ section.settings.section_title }}</h2>
+    <p>{{ section.settings.section_subtitle }}</p>
+  </div>
+
+  <div class="rooms-grid-container">
+    {% for block in section.blocks %}
+      <a href="{{ block.settings.room_link }}" class="room-item-card" {{ block.shopify_attributes }}>
+        <div class="room-image-box">
+          {% if block.settings.room_image %}
+            <img src="{{ block.settings.room_image | image_url: width: 600 }}" alt="{{ block.settings.room_name }}">
+          {% else %}
+            <img src="https://via.placeholder.com/400x500/e0ded9/333333?text={{ block.settings.room_name | url_encode }}" alt="Room Image">
+          {% endif %}
+        </div>
+        <div class="room-details">
+          <h3>{{ block.settings.room_name }}</h3>
+          <p>{{ block.settings.room_offer }}</p>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>
