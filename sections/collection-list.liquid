@@ -1,4 +1,20 @@
+<style>
+  /* Collection Grid & Button Centering Fix */
+  .collection-card, .grid-item-card {
+    position: relative;
+  }
 
+  /* Agar button ka class .shop-now-btn ya similar hai toh yeh CSS apply karein */
+  .collection-card .hero-btn, 
+  .collection-card a.button,
+  .collection-card .shop-now-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+  }
+</style>
 
 {% liquid
   if section.settings.collection_list != blank
