@@ -1,0 +1,312 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .hero-slider-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .hero-slides-container {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    width: auto ;
+  }
+
+  .hero-slide {
+    min-width: 100%;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 20px 60px 20px;
+    min-height: {{ section.settings.desktop_height }}px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    text-align: center;
+  }
+
+  .hero-slide-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.35);
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hero-heading {
+    font-size: 48px;
+    font-weight: 500;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    font-family: Georgia, serif;
+  }
+
+  .hero-subtext {
+    font-size: 18px;
+    color: #ffffff;
+    margin-bottom: 24px;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .hero-btn {
+    display: inline-block;
+    background-color: #ffffff;
+    color: #000000;
+    padding: 14px 32px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+  }
+
+  .hero-btn:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+  }
+
+  .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px;
+    height: 45px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition: background 0.2s ease;
+  }
+
+  .slider-arrow:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .slider-arrow.prev {
+    left: 20px;
+  }
+
+  .slider-arrow.next {
+    right: 20px;
+  }
+
+  .slider-arrow svg {
+    width: 20px;
+    height: 20px;
+    stroke: #ffffff;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  @media (max-width: 768px) {
+    .hero-slide {
+      min-height: {{ section.settings.mobile_height }}px;
+      padding: 0 20px 40px 20px;
+    }
+
+    .hero-heading {
+      font-size: 32px;
+    }
+
+    .hero-subtext {
+      font-size: 15px;
+    }
+  }
+</style>
+
+<div class="hero-slider-wrapper">
+  {% if section.settings.show_arrows %}
+    <button class="slider-arrow prev" onclick="moveSlide(-1)">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button class="slider-arrow next" onclick="moveSlide(1)">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  {% endif %}
+
+  <div class="hero-slides-container" id="heroSlidesContainer">
+    {% for block in section.blocks %}
+      {%- assign slide_bg = 'https://via.placeholder.com/1920x1080/333333/ffffff?text=Background+Image' -%}
+      {% if block.settings.slide_image %}
+        {%- assign slide_bg = block.settings.slide_image | image_url: width: 2000 -%}
+      {% endif %}
+
+      <div class="hero-slide" style="background-image: url('{{ slide_bg }}');" {{ block.shopify_attributes }}>
+        <div class="hero-slide-overlay" style="opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+
+        <div class="hero-content">
+          {% if block.settings.heading != blank %}
+            <h1 class="hero-heading" style="color: {{ block.settings.heading_color }};">{{ block.settings.heading }}</h1>
+          {% endif %}
+
+          {% if block.settings.subtext != blank %}
+            <p class="hero-subtext" style="color: {{ block.settings.subtext_color }};">{{ block.settings.subtext }}</p>
+          {% endif %}
+
+          {% if block.settings.button_label != blank %}
+            <a href="{{ block.settings.button_link }}" class="hero-btn" style="background-color: {{ block.settings.btn_bg_color }}; color: {{ block.settings.btn_text_color }};">
+              {{ block.settings.button_label }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  let currentSlide = 0;
+  function moveSlide(direction) {
+    const container = document.getElementById('heroSlidesContainer');
+    const totalSlides = container.children.length;
+    if (totalSlides === 0) return;
+    
+    currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+    container.style.transform = `translateX(-${currentSlide * 100}%)`;
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Hero Slider",
+  "settings": [
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "min": 400,
+      "max": 840,
+      "step": 20,
+      "unit": "px",
+      "label": "Desktop Height",
+      "default": 640
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "min": 300,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "label": "Mobile Height",
+      "default": 440
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show Navigation Arrows",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "slide_image",
+          "label": "Slide Background Image"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "min": 0,
+          "max": 90,
+          "step": 5,
+          "unit": "%",
+          "label": "Dark Overlay Opacity",
+          "default": 35
+        },
+        {
+          "type": "header",
+          "content": "Text Settings"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "A Fresh Layer for Your Favourite Space"
+        },
+        {
+          "type": "color",
+          "id": "heading_color",
+          "label": "Heading Color",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "textarea",
+          "id": "subtext",
+          "label": "Description",
+          "default": "Beautifully crafted cushions, made for effortless layering.\nBundle & Save | Up to 40% Off"
+        },
+        {
+          "type": "color",
+          "id": "subtext_color",
+          "label": "Description Color",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "header",
+          "content": "Button Settings"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label",
+          "default": "SHOP THE COLLECTION"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button Link"
+        },
+        {
+          "type": "color",
+          "id": "btn_bg_color",
+          "label": "Button Background Color",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "btn_text_color",
+          "label": "Button Text Color",
+          "default": "#000000"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Slider",
+      "blocks": [
+        {
+          "type": "slide"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

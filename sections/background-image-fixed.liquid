@@ -1,0 +1,269 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .countdown-hero-section {
+    position: relative;
+    width: 100%;
+    min-height: {{ section.settings.section_height }}px;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .countdown-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 1;
+  }
+
+  .countdown-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+  }
+
+  .countdown-subtitle {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #ffffff;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .countdown-title {
+    font-size: 54px;
+    font-weight: 800;
+    color: #f7b500;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  .countdown-timer-box {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .timer-card {
+    background-color: #ffffff;
+    color: #111111;
+    width: 68px;
+    height: 72px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  }
+
+  .timer-number {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .timer-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-top: 4px;
+    color: #666666;
+  }
+
+  .countdown-text {
+    font-size: 15px;
+    color: #ffffff;
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+
+  .countdown-btn {
+    display: inline-block;
+    background-color: #ffffff;
+    color: #000000;
+    padding: 14px 36px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: background 0.3s ease;
+  }
+
+  .countdown-btn:hover {
+    background-color: #f0f0f0;
+  }
+
+  @media (max-width: 768px) {
+    .countdown-title {
+      font-size: 36px;
+    }
+    .timer-card {
+      width: 58px;
+      height: 62px;
+    }
+    .timer-number {
+      font-size: 20px;
+    }
+  }
+</style>
+
+{%- assign bg_image = 'https://via.placeholder.com/1920x1080/333333/ffffff?text=Timer+Background' -%}
+{% if section.settings.bg_img %}
+  {%- assign bg_image = section.settings.bg_img | image_url: width: 2000 -%}
+{% endif %}
+
+<div class="countdown-hero-section" style="background-image: url('{{ bg_image }}');" {{ section.shopify_attributes }}>
+  <div class="countdown-hero-overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+
+  <div class="countdown-hero-content">
+    <div class="countdown-subtitle">{{ section.settings.subtitle }}</div>
+    <h2 class="countdown-title">{{ section.settings.title }}</h2>
+
+    <div class="countdown-timer-box" id="timerContainer-{{ section.id }}" data-date="{{ section.settings.end_date }}">
+      <div class="timer-card">
+        <span class="timer-number" id="days-{{ section.id }}">00</span>
+        <span class="timer-label">DAYS</span>
+      </div>
+      <div class="timer-card">
+        <span class="timer-number" id="hours-{{ section.id }}">00</span>
+        <span class="timer-label">HRS</span>
+      </div>
+      <div class="timer-card">
+        <span class="timer-number" id="minutes-{{ section.id }}">00</span>
+        <span class="timer-label">MIN</span>
+      </div>
+      <div class="timer-card">
+        <span class="timer-number" id="seconds-{{ section.id }}">00</span>
+        <span class="timer-label">SEC</span>
+      </div>
+    </div>
+
+    <p class="countdown-text">{{ section.settings.description }}</p>
+
+    {% if section.settings.button_label != blank %}
+      <a href="{{ section.settings.button_link }}" class="countdown-btn">{{ section.settings.button_label }}</a>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  (function () {
+    const container = document.getElementById('timerContainer-{{ section.id }}');
+    if (!container) return;
+    const dateStr = container.getAttribute('data-date');
+    const countDownDate = new Date(dateStr).getTime();
+
+    const x = setInterval(function () {
+      const now = new Date().getTime();
+      const distance = countDownDate - now;
+
+      if (distance < 0) {
+        clearInterval(x);
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('days-{{ section.id }}').innerText = String(days).padStart(2, '0');
+      document.getElementById('hours-{{ section.id }}').innerText = String(hours).padStart(2, '0');
+      document.getElementById('minutes-{{ section.id }}').innerText = String(minutes).padStart(2, '0');
+      document.getElementById('seconds-{{ section.id }}').innerText = String(seconds).padStart(2, '0');
+    }, 1000);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Countdown Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "bg_img",
+      "label": "Background Image"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Dark Overlay Opacity",
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "min": 400,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "label": "Section Height",
+      "default": 600
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "GET THE MOST POPULAR PRODUCTS"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Main Heading",
+      "default": "70% OFF"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "Timer End Date (YYYY-MM-DDTHH:MM:SS)",
+      "default": "2026-12-31T23:59:59"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Stock is limited. Order now to avoid disappointment"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Countdown Banner"
+    }
+  ]
+}
+{% endschema %}

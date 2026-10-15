@@ -1,263 +1,444 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
+  .site-footer {
+    position: relative;
+    background-color: #111111;
+    color: #ffffff;
+    padding: 70px 5% 30px 5%;
+    font-family: system-ui, -apple-system, sans-serif;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 
-{% liquid
-  if section.settings.background_color != blank
-    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
-  endif
-%}
+  .footer-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(17, 17, 17, 0.85);
+    z-index: 1;
+  }
 
-<div
-  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
-></div>
-<div
-  class="section section--{{ section.settings.section_width }}{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
->
-  {% liquid
-    assign total_blocks = section.blocks.size
+  .footer-grid, .footer-bottom {
+    position: relative;
+    z-index: 2;
+  }
 
-    # Grid layout calculations
-    assign grid_columns = total_blocks | at_most: 4
-
-    # Calculate last row counts using modulo arithmetic
-    # last_row_count = (total_blocks - 1) % N + 1
-    assign last_row_count = total_blocks | minus: 1 | modulo: 4 | plus: 1
-    assign tablet_last_row_count = total_blocks | minus: 1 | modulo: 2 | plus: 1
-
-    # Check if there are orphaned elements (single item in last row)
-    assign has_isolated_grid_item_desktop = false
-    assign has_isolated_grid_item_tablet = false
-
-    if total_blocks > 4 and last_row_count == 1
-      assign has_isolated_grid_item_desktop = true
-    endif
-
-    if total_blocks == 5
-      assign has_isolated_grid_item_tablet = true
-    endif
-  %}
-  <div
-    class="
-      footer-content
-      spacing-style
-      {% if has_isolated_grid_item_desktop %}footer-content--isolated-grid-item-desktop{% endif %}
-      {% if has_isolated_grid_item_tablet %}footer-content--isolated-grid-item-tablet{% endif %}
-    "
-    style="
-      {%  render 'spacing-style', settings: section.settings %}
-      --footer-gap: {{ section.settings.gap }}px;
-      --grid-columns: {{ grid_columns }};
-      --last-row-count: {{ last_row_count }};
-      --tablet-last-row-count: {{ tablet_last_row_count }};
-    "
-  >
-    {% content_for 'blocks' %}
-  </div>
-</div>
-
-{% stylesheet %}
-  .footer-content {
-    contain: content;
-    content-visibility: auto;
+  .footer-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--footer-gap);
-    align-items: start;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr 1.5fr;
+    gap: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   }
 
-  .footer-content .menu__heading__default {
-    font-weight: var(--font-heading--weight);
+  .footer-col h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    color: #ffffff;
   }
 
-  @media screen and (min-width: 750px) and (max-width: 989px) {
-    .footer-content {
-      grid-template-columns: repeat(min(var(--grid-columns), 3), 1fr);
-      grid-auto-flow: row;
-    }
+  .footer-col p, .footer-col address {
+    font-size: 14px;
+    color: #cccccc;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    font-style: normal;
+  }
 
-    .footer-content[style*='--grid-columns: 4'] {
+  .footer-col ul {
+    list-style: none;
+  }
+
+  .footer-col ul li {
+    margin-bottom: 12px;
+  }
+
+  .footer-col ul li a {
+    color: #cccccc;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+  }
+
+  .footer-col ul li a:hover {
+    color: #ffffff;
+  }
+
+  .footer-socials {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+  }
+
+  .footer-socials a {
+    width: 32px;
+    height: 32px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+  }
+
+  .footer-socials a:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .footer-socials svg {
+    width: 14px;
+    height: 14px;
+    fill: #ffffff;
+  }
+
+  .footer-newsletter p {
+    font-size: 13px;
+    color: #cccccc;
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .footer-form input[type="email"] {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #111111;
+    margin-bottom: 12px;
+  }
+
+  .footer-form input[type="email"]::placeholder {
+    color: #777777;
+  }
+
+  .footer-form button {
+    background-color: #ffffff;
+    color: #111111;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .footer-form button:hover {
+    background-color: #e0e0e0;
+  }
+
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 30px auto 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #aaaaaa;
+  }
+
+  .footer-bottom-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-bottom-links a {
+    color: #aaaaaa;
+    text-decoration: none;
+  }
+
+  .footer-bottom-links a:hover {
+    color: #ffffff;
+  }
+
+  @media (max-width: 1024px) {
+    .footer-grid {
       grid-template-columns: repeat(2, 1fr);
-    }
-
-    .footer-content--isolated-grid-item-tablet > :last-child {
-      grid-column: 1 / -1;
+      gap: 30px;
     }
   }
 
-  @media screen and (min-width: 990px) {
-    .footer-content {
-      grid-template-columns: repeat(var(--grid-columns), 1fr);
+  @media (max-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 30px;
     }
-
-    /* Single item centered */
-    .footer-content[style*='--grid-columns: 1'] {
-      justify-items: center;
-    }
-
-    .footer-content--isolated-grid-item-desktop > :last-child {
-      grid-column: 1 / -1;
+    .footer-bottom {
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
     }
   }
-{% endstylesheet %}
+</style>
+
+{%- assign footer_bg = 'https://via.placeholder.com/1920x800/111111/ffffff?text=Footer+Background' -%}
+{% if section.settings.footer_bg_image %}
+  {%- assign footer_bg = section.settings.footer_bg_image | image_url: width: 2000 -%}
+{% endif %}
+
+<footer class="site-footer" style="background-image: url('{{ footer_bg }}');" {{ section.shopify_attributes }}>
+  <div class="footer-overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+
+  <div class="footer-grid">
+    
+    <div class="footer-col">
+      <h3>Office</h3>
+      <address>{{ section.settings.office_address }}</address>
+      
+      <h3 style="margin-top: 20px;">Phone</h3>
+      <p>{{ section.settings.phone_number }}</p>
+      
+      <h3 style="margin-top: 20px;">Email</h3>
+      <p>{{ section.settings.contact_email }}</p>
+
+      <div class="footer-socials">
+        <a href="{{ section.settings.twitter_link }}" aria-label="Twitter">
+          <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="{{ section.settings.facebook_link }}" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="{{ section.settings.linkedin_link }}" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="{{ section.settings.instagram_link }}" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </a>
+        <a href="{{ section.settings.youtube_link }}" aria-label="YouTube">
+          <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"></path><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#111"></polygon></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h3>{{ section.settings.menu_title_1 }}</h3>
+      <ul>
+        {% for link in linklists[section.settings.menu_1].links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h3>{{ section.settings.menu_title_2 }}</h3>
+      <ul>
+        {% for link in linklists[section.settings.menu_2].links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h3>{{ section.settings.menu_title_3 }}</h3>
+      <ul>
+        {% for link in linklists[section.settings.menu_3].links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="footer-col footer-newsletter">
+      <h3>{{ section.settings.newsletter_title }}</h3>
+      <p>{{ section.settings.newsletter_text }}</p>
+      
+      {% form 'customer', class: 'footer-form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <input type="email" name="contact[email]" placeholder="Enter Email address" required autocomplete="email">
+        <button type="submit">Subscribe</button>
+      {% endform %}
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <div>{{ section.settings.copyright_text }}</div>
+    <div class="footer-bottom-links">
+      <a href="{{ section.settings.terms_link }}">Terms of Use</a>
+      <a href="{{ section.settings.security_link }}">Security</a>
+      <a href="{{ section.settings.privacy_link }}">Privacy</a>
+      <a href="mailto:{{ section.settings.contact_email }}">{{ section.settings.contact_email }}</a>
+    </div>
+  </div>
+</footer>
 
 {% schema %}
 {
-  "name": "t:names.footer",
-  "class": "section-wrapper",
-  "blocks": [
-    {
-      "type": "_divider"
-    },
-    {
-      "type": "@app"
-    },
-    {
-      "type": "button"
-    },
-    {
-      "type": "follow-on-shop"
-    },
-    {
-      "type": "group"
-    },
-    {
-      "type": "icon"
-    },
-    {
-      "type": "image"
-    },
-    {
-      "type": "menu"
-    },
-    {
-      "type": "payment-icons"
-    },
-    {
-      "type": "text"
-    },
-    {
-      "type": "logo"
-    },
-    {
-      "type": "jumbo-text"
-    },
-    {
-      "type": "social-links"
-    },
-    {
-      "type": "email-signup"
-    }
-  ],
-  "enabled_on": {
-    "groups": ["footer"]
-  },
+  "name": "Footer",
   "settings": [
     {
-      "type": "select",
-      "id": "section_width",
-      "label": "t:settings.width",
-      "options": [
-        {
-          "value": "page-width",
-          "label": "t:options.page"
-        },
-        {
-          "value": "full-width",
-          "label": "t:options.full"
-        }
-      ],
-      "default": "page-width"
+      "type": "header",
+      "content": "Background Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "footer_bg_image",
+      "label": "Footer Background Image"
     },
     {
       "type": "range",
-      "id": "gap",
-      "label": "t:settings.gap",
+      "id": "overlay_opacity",
       "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:settings.background_color",
-      "default": "{{ settings.color_palette.foreground }}"
+      "max": 95,
+      "step": 5,
+      "unit": "%",
+      "label": "Dark Overlay Opacity",
+      "default": 85
     },
     {
       "type": "header",
-      "content": "t:content.padding"
+      "content": "Contact Information"
     },
     {
-      "type": "range",
-      "id": "padding-block-start",
-      "label": "t:settings.top",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 20
+      "type": "textarea",
+      "id": "office_address",
+      "label": "Office Address",
+      "default": "New Delhi, India"
     },
     {
-      "type": "range",
-      "id": "padding-block-end",
-      "label": "t:settings.bottom",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 20
+      "type": "text",
+      "id": "phone_number",
+      "label": "Phone Number",
+      "default": "+91 82XXXXXXXX"
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Email Address",
+      "default": "hello@example.com"
+    },
+    {
+      "type": "header",
+      "content": "Social Media Links"
+    },
+    {
+      "type": "url",
+      "id": "twitter_link",
+      "label": "Twitter Link"
+    },
+    {
+      "type": "url",
+      "id": "facebook_link",
+      "label": "Facebook Link"
+    },
+    {
+      "type": "url",
+      "id": "linkedin_link",
+      "label": "LinkedIn Link"
+    },
+    {
+      "type": "url",
+      "id": "instagram_link",
+      "label": "Instagram Link"
+    },
+    {
+      "type": "url",
+      "id": "youtube_link",
+      "label": "YouTube Link"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Column 1"
+    },
+    {
+      "type": "text",
+      "id": "menu_title_1",
+      "label": "Column Title",
+      "default": "Browse"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_1",
+      "label": "Select Menu"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Column 2"
+    },
+    {
+      "type": "text",
+      "id": "menu_title_2",
+      "label": "Column Title",
+      "default": "How it works"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_2",
+      "label": "Select Menu"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Column 3"
+    },
+    {
+      "type": "text",
+      "id": "menu_title_3",
+      "label": "Column Title",
+      "default": "Company"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_3",
+      "label": "Select Menu"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "label": "Newsletter Title",
+      "default": "Newsletter"
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_text",
+      "label": "Newsletter Description",
+      "default": "Enter your email to receive daily news and get 10% off coupon on all items"
+    },
+    {
+      "type": "header",
+      "content": "Bottom Bar"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright Text",
+      "default": "© 2026 name"
+    },
+    {
+      "type": "url",
+      "id": "terms_link",
+      "label": "Terms of Use Link"
+    },
+    {
+      "type": "url",
+      "id": "security_link",
+      "label": "Security Link"
+    },
+    {
+      "type": "url",
+      "id": "privacy_link",
+      "label": "Privacy Link"
     }
   ],
   "presets": [
     {
-      "name": "t:names.footer",
-      "category": "t:categories.footer",
-      "settings": {
-        "gap": 20,
-        "padding-block-start": 36,
-        "padding-block-end": 36
-      },
-      "blocks": {
-        "newsletter-group": {
-          "type": "group",
-          "settings": {
-            "content_direction": "column",
-            "vertical_on_mobile": true,
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "center",
-            "gap": 6,
-            "width": "fill"
-          },
-          "blocks": {
-            "newsletter-heading": {
-              "type": "text",
-              "settings": {
-                "text": "t:html_defaults.join_our_email_list",
-                "width": "100%",
-                "alignment": "left",
-                "type_preset": "h3"
-              }
-            },
-            "newsletter-text": {
-              "type": "text",
-              "settings": {
-                "text": "t:html_defaults.get_exclusive_deals_and_early_access_to_new_products",
-                "width": "100%",
-                "alignment": "left",
-                "type_preset": "rte"
-              }
-            }
-          },
-          "block_order": ["newsletter-heading", "newsletter-text"]
-        },
-        "newsletter-form": {
-          "type": "email-signup",
-          "settings": {
-            "width": "fill"
-          }
-        }
-      },
-      "block_order": ["newsletter-group", "newsletter-form"]
+      "name": "Footer"
     }
   ]
 }

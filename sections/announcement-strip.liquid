@@ -1,0 +1,87 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .announcement-strip-section {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .announcement-strip-link {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+  }
+
+  .announcement-strip-banner {
+    width: 100%;
+    min-height: {{ section.settings.strip_height }}px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (max-width: 768px) {
+    .announcement-strip-banner {
+      min-height: 90px;
+    }
+  }
+</style>
+
+<div class="announcement-strip-section">
+  {%- assign strip_bg = 'https://via.placeholder.com/1920x120/111111/ffffff?text=Mega+Sale+Banner' -%}
+  {% if section.settings.strip_image %}
+    {%- assign strip_bg = section.settings.strip_image | image_url: width: 2000 -%}
+  {% endif %}
+
+  {% if section.settings.strip_link != blank %}
+    <a href="{{ section.settings.strip_link }}" class="announcement-strip-link">
+  {% endif %}
+
+    <div class="announcement-strip-banner" style="background-image: url('{{ strip_bg }}');" {{ section.shopify_attributes }}>
+    </div>
+
+  {% if section.settings.strip_link != blank %}
+    </a>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Announcement Strip",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "strip_image",
+      "label": "Banner Image"
+    },
+    {
+      "type": "url",
+      "id": "strip_link",
+      "label": "Banner Link"
+    },
+    {
+      "type": "range",
+      "id": "strip_height",
+      "min": 60,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop Height",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement Strip"
+    }
+  ]
+}
+{% endschema %}
